@@ -28,22 +28,51 @@
 
 ### Сайт
 Создайте две ВМ в разных зонах, установите на них сервер nginx, если его там нет. ОС и содержимое ВМ должно быть идентичным, это будут наши веб-сервера.
+*************************************************************************************************************
+
+Создал инфраструктуру из 6 ВМ по общему заданию + 1 вм для Terraform и Ansible. web-1 и web-2 помещены в разные зоны. Сервера Web,Elasticsearh помещены в приватные подсети.Сервера Zabbix, Kibana, application load balancer помещены в публичную подсеть.
+
+![img](img/1.PNG)
+
+Установлен Nginx
+
+![img](img/1.1.PNG)
+
+![img](img/1.2.PNG)
+
+*****************************************************************************************************************
 
 Используйте набор статичных файлов для сайта. Можно переиспользовать сайт из домашнего задания.
 
 Создайте [Target Group](https://cloud.yandex.com/docs/application-load-balancer/concepts/target-group), включите в неё две созданных ВМ.
 
+![img](img/1.3.PNG)
+
 Создайте [Backend Group](https://cloud.yandex.com/docs/application-load-balancer/concepts/backend-group), настройте backends на target group, ранее созданную. Настройте healthcheck на корень (/) и порт 80, протокол HTTP.
+
+![img](img/1.4.PNG)
 
 Создайте [HTTP router](https://cloud.yandex.com/docs/application-load-balancer/concepts/http-router). Путь укажите — /, backend group — созданную ранее.
 
+![img](img/1.5.PNG)
+
 Создайте [Application load balancer](https://cloud.yandex.com/en/docs/application-load-balancer/) для распределения трафика на веб-сервера, созданные ранее. Укажите HTTP router, созданный ранее, задайте listener тип auto, порт 80.
 
+![img](img/1.6.PNG)
+
 Протестируйте сайт
-`curl -v <публичный IP балансера>:80` 
+`curl -v 158.160.57.233:80` 
+
+![img](img/1.7.PNG)
 
 ### Мониторинг
 Создайте ВМ, разверните на ней Zabbix. На каждую ВМ установите Zabbix Agent, настройте агенты на отправление метрик в Zabbix. 
+
+![img](img/1.8.PNG)
+
+http://51.250.34.93:8080/
+login: Admin
+Pass: zabbix
 
 Настройте дешборды с отображением метрик, минимальный набор — по принципу USE (Utilization, Saturation, Errors) для CPU, RAM, диски, сеть, http запросов к веб-серверам. Добавьте необходимые tresholds на соответствующие графики.
 
