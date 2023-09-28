@@ -71,13 +71,58 @@
 ![img](img/1.8.PNG)
 
 http://51.250.34.93:8080/
+
 login: Admin
+
 Pass: zabbix
 
 Настройте дешборды с отображением метрик, минимальный набор — по принципу USE (Utilization, Saturation, Errors) для CPU, RAM, диски, сеть, http запросов к веб-серверам. Добавьте необходимые tresholds на соответствующие графики.
 
+![img](img/1.9.PNG)
+
 ### Логи
 Cоздайте ВМ, разверните на ней Elasticsearch. Установите filebeat в ВМ к веб-серверам, настройте на отправку access.log, error.log nginx в Elasticsearch.
+
+Создаю VM elasticsearch:
+
+![img](img/1.10.PNG)
+
+На web1 и web2 установлены filebeat.Заходим поочередно на сервера и настраиваем конфиг файл на отправку логов.
+
+Так как одним из заданий была реализация концепции bastion host,то на сервера будем заходить через него.
+Пример доступа к web-1 и web-2
+
+```
+ssh grishenkovnn@10.1.0.10
+```
+```
+ssh grishenkovnn@10.2.0.10 
+```
+
+```
+sudo nano /etc/filebeat/filebeat.yml
+```
+
+вставляем ip elastic и публичный ip kibana
+
+```
+sudo nano /etc/filebeat/modules.d/nginx.yml.disabled
+```
+ Заменить false на true в блоках error и access
+
+```
+sudo systemctl restart filebeat
+```
+```
+sudo filebeat modules enable nginx
+```
+```
+sudo filebeat setup
+```
+```
+sudo filebeat -e 
+```
+******************************************************************************************************
 
 Создайте ВМ, разверните на ней Kibana, сконфигурируйте соединение с Elasticsearch.
 
