@@ -70,7 +70,7 @@
 
 ![img](img/1.8.PNG)
 
-http://51.250.34.93:8080/
+[http://51.250.34.93:8080/](http://51.250.34.93:8080/)
 
 login: Admin
 
@@ -82,6 +82,8 @@ Pass: zabbix
 
 ### Логи
 Cоздайте ВМ, разверните на ней Elasticsearch. Установите filebeat в ВМ к веб-серверам, настройте на отправку access.log, error.log nginx в Elasticsearch.
+
+Все продукты Elastic были скачаны с зеркала Yandex заранее, так как он работает нестабильно и Ansible не может нормально их скачать.
 
 Создаю VM elasticsearch:
 
@@ -103,10 +105,10 @@ ssh grishenkovnn@10.2.0.10
 sudo nano /etc/filebeat/filebeat.yml
 ```
 
-вставляем ip elastic и публичный ip kibana
+вставляем ip elastic и ip kibana
 
 ```
-sudo nano /etc/filebeat/modules.d/nginx.yml.disabled
+sudo nano /etc/filebeat/modules.d/nginx.yml
 ```
  Заменить false на true в блоках error и access
 
@@ -124,17 +126,52 @@ sudo filebeat -e
 ```
 ******************************************************************************************************
 
+![img](img/1.11.PNG)
+
+![img](img/1.12.PNG)
+
 Создайте ВМ, разверните на ней Kibana, сконфигурируйте соединение с Elasticsearch.
+
+Заходим на сервер Kibana,и настраиваем конфиг для подключени к elasticsearch.
+
+```
+sudo nano /etc/kibana/kibana.yml
+```
+
+Вставляем адрес elasticsearch
+    
+[http://51.250.47.37:5601/](http://51.250.47.37:5601/)
+
+![img](img/1.13.PNG)
+
+![img](img/1.14.PNG)
+
 
 ### Сеть
 Разверните один VPC. Сервера web, Elasticsearch поместите в приватные подсети. Сервера Zabbix, Kibana, application load balancer определите в публичную подсеть.
+
+![img](img/1.15.PNG)
 
 Настройте [Security Groups](https://cloud.yandex.com/docs/vpc/concepts/security-groups) соответствующих сервисов на входящий трафик только к нужным портам.
 
 Настройте ВМ с публичным адресом, в которой будет открыт только один порт — ssh. Настройте все security groups на разрешение входящего ssh из этой security group. Эта вм будет реализовывать концепцию bastion host. Потом можно будет подключаться по ssh ко всем хостам через этот хост.
 
+![img](img/1.16.PNG)
+
+![img](img/1.17.PNG)
+
+В файле hosts пропысываем правило для подключения к хостам через bastion
+
+![img](img/1.18.PNG)
+
+
 ### Резервное копирование
 Создайте snapshot дисков всех ВМ. Ограничьте время жизни snaphot в неделю. Сами snaphot настройте на ежедневное копирование.
+
+![img](img/1.19.PNG)
+
+![img](img/1.20.PNG)
+
 
 ### Дополнительно
 Не входит в минимальные требования. 
